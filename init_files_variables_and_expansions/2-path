@@ -1,2 +1,2 @@
 #!/bin/bash
-export PATH="$PATH:/init_files_variables_and_expansions"
+export PATH="$PATH:/root/holbertonschool-shell/init_files_variables_and_expansions"
