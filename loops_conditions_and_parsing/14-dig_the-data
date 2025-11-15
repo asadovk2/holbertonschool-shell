@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# This script parses apache-access.log, counts IP/Code pairs, and sorts by count.
+
+# 1. 'awk' reads the file, counts all combinations.
+# 2. In the 'END' block, 'printf' formats the output.
+# 3. '|' (pipe) sends that formatted output to the 'sort' command.
+# 4. 'sort' organizes the lines.
+
+awk '{ count[$1 " " $9]++ } END { for (key in count) printf "%7s %s\n", count[key], key }' apache-access.log | sort -nr -k1                                                                                            
+~                                        

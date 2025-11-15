@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# This script reads /etc/passwd and prints only the username, UID, and home.
+
+# Read the /etc/passwd file line by line
+while read -r line
+do
+  # For each line, pipe it to 'cut' and extract fields 1, 3, and 6
+  echo "$line" | cut -d ':' -f 1,3,6
+
+done < /etc/passwd
