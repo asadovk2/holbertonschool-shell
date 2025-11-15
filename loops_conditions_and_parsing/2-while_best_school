@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# g
+i=0 # 1. INITIALIZE the counter
+
+while [ $i -lt 10 ]; do #2. CHECK the counter
+	echo "Best School"
+	i=$((i+1)) # 3. INCREMENT the counter
+done
