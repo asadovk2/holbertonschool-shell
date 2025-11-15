@@ -1,31 +1,28 @@
 #!/usr/bin/env bash
-# This script checks if the file "school" exists and what it is.
+# This script that displays numbers from 1 to 100 with next requierements:
+# 1. Displays FizzBuzz when the number is a multiple of 3 and 5;
+# 2. Displays Fizz when the number is multiple of 3;
+# 3. Displays Buzz when the number is a multiple of 5;
+# 4. Otherwise, displays the number;
+# 5. In a list format;
 
-# 1. The first big question: Does "school" even exist?
-if [ -e "school" ]; then
-  # --- BEGIN 'THEN' BLOCK (It DOES exist) ---
+# start a loop that counts from 1 to 100
+for i in {1..100}
+do
+	# check for the most specific condition 1st (multiple of 3 AND 5)
+	# user [[ ... && ... ]] to mean "AND"
+	if [[ $(( i % 3 )) -eq 0 && $(( i % 5 )) -eq 0 ]]; then
+		echo "FizzBuzz"
 
-  # 1a. OK, it exists. Print this first.
-  echo "school file exists"
+	# if not, check for just multiple of 3
+	elif [[ $(( i % 3 )) -eq 0 ]]; then
+		echo "Fizz"
 
-  # 1b. Now, let's ask a new question: Does it have any content?
-  if [ -s "school" ]; then
-    echo "school file is not empty"
-  else
-    echo "school file is empty"
-  fi
-
-  # 1c. Last question: Is it a regular file (and not a directory)?
-  if [ -f "school" ]; then
-    echo "school is a regular file"
-  fi
-  
-  # --- END 'THEN' BLOCK ---
-
-else
-  # --- BEGIN 'ELSE' BLOCK (It does NOT exist) ---
-  
-  # 2. It doesn't exist. Print this and we are done.
-  echo "school file does not exist"
-
-fi
+	# if not check for just multiple of 5
+	elif [[ $(( i % 5 )) -eq 0 ]]; then
+		echo "Buzz"
+	# if it is none of the above, just print the number
+	else
+		echo "$i"
+	fi
+done
