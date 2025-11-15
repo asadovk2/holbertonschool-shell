@@ -1,9 +1,81 @@
 #!/usr/bin/env bash
-# Indefinitely writes "I am alive" to the file /tmp/my_process.
-#   Pauses two seconds in between each message.
+# This is script "11-manage_my_process", that manages manage_my_process
+# Requirements:
+# When passing the argument start:
+# Starts manage_my_process
+# Creates a file containing its PID in /var/run/my_process.pid
+# Displays manage_my_process started
+# When passing the argument stop:
+# Stops manage_my_process
+# Deletes the file /var/run/my_process.pid
+# Displays manage_my_process stopped
+# When passing the argument restart
+# Stops manage_my_process
+# Deletes the file /var/run/my_process.pid
+# Starts manage_my_process
+# Creates a file containing its PID in /var/run/my_process.pid
+# Displays manage_my_process restarted
+# Displays Usage: manage_my_process {start|stop|restart} if any other argument or no argument is passed
 
-while true
-do
-  echo "I am alive!" >> /tmp/my_process
-  sleep 2
-done
+# Path to the PID file.
+# We use /var/run because the task example shows 'sudo',
+# meaning we have root privileges to write here.
+PID_FILE="/var/run/my_process.pid"
+
+# Path to the worker script
+# This assumes it is in the same directory
+PROCESS_SCRIPT="./manage_my_process"
+
+# Check the first argument ($1) passed to the script
+case "$1" in
+  start)
+    # --- START ---
+    # Start the process in the background (&)
+    "$PROCESS_SCRIPT" &
+    
+    # Get the PID of the just-launched process ($!) and save it
+    echo $! > "$PID_FILE"
+    # echo "manage_my_process started"
+    ;;
+
+  stop)
+    # --- STOP ---
+    # Check if the PID file exists
+    if [ -f "$PID_FILE" ]; then
+      # Read the PID from the file and pass it to 'kill'
+      kill "$(cat "$PID_FILE")"
+      
+      # Remove the PID file
+      rm -f "$PID_FILE"
+      echo "manage_my_process stopped"
+    else
+      echo "manage_my_process is not running (PID file not found)."
+    fi
+    ;;
+
+  restart)
+    # --- RESTART ---
+    # This is a combination of stop and start
+    
+    # 1. Stop the process (if it's running)
+    if [ -f "$PID_FILE" ]; then
+      kill "$(cat "$PID_FILE")"
+      rm -f "$PID_FILE"
+    fi
+    
+    # 2. Start the process again
+    "$PROCESS_SCRIPT" &
+    echo $! > "$PID_FILE"
+    echo "manage_my_process restarted"
+    ;;
+
+  *)
+    # --- DEFAULT (Invalid argument) ---
+    # If $1 is not 'start', 'stop', or 'restart'
+    # Show the usage message and exit with an error
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+    ;;
+esac
+
+exit 0
