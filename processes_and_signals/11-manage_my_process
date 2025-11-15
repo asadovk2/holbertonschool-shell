@@ -1,48 +1,33 @@
 #!/usr/bin/env bash
-# Script that manages the execution of manage_my_process script
-# Syntax: manage_my_process [start|stop|restart]
-# Option:
-# 	start: start the script
-#	stop: stop the script
-#	restart: restart the script
+# This script manages manage_my_process
 
-function error()
-{
-	echo "Usage: manage_my_process {start|stop|restart}"
-	exit
+PIDFILE=/var/run/my_process.pid
+
+start() {
+    ./manage_my_process &
+    echo "$!" > "$PIDFILE"
 }
 
-function start()
-{
-	./manage_my_process &
-	echo "$!" > /var/run/my_process.pid
-	echo "manage_my_process started"
+stop() {
+    sudo kill -15 "$(cat "$PIDFILE")" && rm -f "$PIDFILE"
 }
 
-function stop()
-{
-	kill "$(cat /run/my_process.pid)"
-	rm /run/my_process.pid
-	echo "manage_my_process stopped"
-}
+case "$1" in 
+    start)
+       start
+       echo "manage_my_process started"
+       ;;
+    stop)
+       stop
+       echo "manage_my_process stopped"
+       ;;
+    restart)
+       stop
+       start
+       echo "manage_my_process restarted"
+       ;;
+    *)
+       echo "Usage: manage_my_process {start|stop|restart}"
+esac
 
-function restart()
-{
-	kill "$(cat /run/my_process.pid)"
-	rm /run/my_process.pid
-	./manage_my_process &
-	echo "$!" > /var/run/my_process.pid
-	echo "manage_my_process restarted"
-}
-
-if [ "$#" -lt 1 ]; then
-	"error"
-elif [ "$1" = "start" ]; then
-	"start"
-elif [ "$1" = "restart" ]; then
-	"restart"
-elif [ "$1" = "stop" ]; then
-	"stop"
-else
-	"error"
-fi
+exit 0
